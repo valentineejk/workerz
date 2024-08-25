@@ -1,10 +1,26 @@
 version: '3.8'
 
 services:
+
+  workerz:
+    container_name: workerz
+    build: 
+      context: ./../server
+      dockerfile: ./../server/Dockerfile
+    depends_on:
+      - postgres
+    restart: always
+    ports:
+      - '4000:4000'
+    deploy:
+      mode: replicated
+      replicas: 1
+
   postgres:
       image: 'postgres:15.2'
+      container_name: postgres
       ports:
-        - "5432:5432"
+        - 5432:5432
       deploy:
         mode: replicated
         replicas: 1
@@ -14,18 +30,9 @@ services:
         POSTGRES_DB: workerz
       volumes:
         - ./db-data/postgres/:/var/lib/postgresql/data/
+volumes:
+  db-data: {}
         
-  workerz:
-    build: 
-      context: ./../server
-      dockerfile: ./../server/Dockerfile
-    depends_on:
-      - postgres
-    restart: always
-    ports:
-      - 4000:4000
-    deploy:
-      mode: replicated
-      replicas: 1
+
 
 

@@ -8,6 +8,6 @@ import (
 func Router(g *gin.Engine, s *controller.WorkerzController) {
 
 	r := g.Group("/v1")
-
-	r.GET("/getin", s.GetData)
+	r.POST("/add", s.AddWorkerz)
+	r.GET("/all", s.GetAllWorkerz)
 }

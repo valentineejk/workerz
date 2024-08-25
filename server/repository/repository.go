@@ -4,11 +4,11 @@ import (
 	"context"
 
 	dbq "github.com/valentineejk/workerz/database/sqlc"
-	"github.com/valentineejk/workerz/model"
 )
 
 type WorkerzRepo interface {
-	InsertWorkerz(ctx context.Context, Worker model.Workerz) error
+	InsertWorkerz(ctx context.Context, Worker dbq.InsertWorkerzParams) error
+	ListWorkerz(ctx context.Context) ([]dbq.Workerz, error)
 }
 
 type DbWorkerzRepoImpl struct {
@@ -21,6 +21,24 @@ func NewDbWorkerzRepo(db *dbq.Queries) *DbWorkerzRepoImpl {
 	}
 }
 
-func (w *DbWorkerzRepoImpl) InsertWorkerz(ctx context.Context, Worker model.Workerz) error {
+func (w *DbWorkerzRepoImpl) InsertWorkerz(ctx context.Context, Worker dbq.InsertWorkerzParams) error {
+
+	_, err := w.db.InsertWorkerz(ctx, Worker)
+	if err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func (w *DbWorkerzRepoImpl) ListWorkerz(ctx context.Context) ([]dbq.Workerz, error) {
+
+	wrzListData, err := w.db.GetAllWorkerz(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	workerzList := append([]dbq.Workerz{}, wrzListData...)
+
+	return workerzList, nil
 }
